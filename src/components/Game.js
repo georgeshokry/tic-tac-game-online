@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Spin, Button, Typography, Layout} from 'antd';
+import {Spin, Button, Typography} from 'antd';
 import { withRouter } from "react-router-dom";
 import Board from './Board';
 import * as firebase from 'firebase';
@@ -123,17 +123,6 @@ class Game extends Component{
     };
 
 
-    // handleOk = () => {
-    //
-    // };
-
-    // handelInput = e =>{
-    //     console.log(e.target.value);
-    //     this.setState({
-    //         ...this.state,
-    //         userName: e.target.value,
-    //     })
-    // };
     render() {
         const history = this.state.history;
         const current = history[this.state.stepNum];
