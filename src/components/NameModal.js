@@ -47,7 +47,7 @@ class NameModal extends Component {
 
          const postData =  {
              username: values.usernameX,
-             playArray: [],
+             playArray: Array(9).fill(""),
              nextPlayer: values.usernameX,
              contender:{username: values.usernameO},
              X: values.usernameX,
