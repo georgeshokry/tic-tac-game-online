@@ -22,8 +22,8 @@ const tailLayout = {
 };
 
 const validateMessages = {
-    required: '${label} is required!',
-    range: '${label} must be between ${min} and ${max}',
+    required: `${label} is required!`,
+    range: `${label} must be between ${min} and ${max}`,
 
 };
 class NameModal extends Component {
