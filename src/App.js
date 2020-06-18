@@ -28,7 +28,7 @@ function App() {
         </Router>
               </Content>
       <Footer style={{ textAlign: 'center' }}>
-          created by <HeartTwoTone  className="pulse" twoToneColor="#eb2f96" /> <a target="_blank" rel="noreferrer" href="https://github.com/georgeshokry">George Shokry</a>
+          created by <HeartTwoTone  className="pulse" twoToneColor="#eb2f96" /> <a target="_blank" rel="noopener noreferrer" href="https://github.com/georgeshokry">George Shokry</a>
       </Footer>
 
           </Layout>
