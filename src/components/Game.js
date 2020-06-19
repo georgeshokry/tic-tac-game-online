@@ -4,7 +4,6 @@ import { withRouter } from "react-router-dom";
 import Board from './Board';
 import * as firebase from 'firebase';
 import './Game.css';
-import CopyToClipboard from './CopyToClipboard';
 
 const { Title } = Typography;
 

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal, Button, Form, Input, InputNumber} from 'antd';
+import {Modal, Button, Form, Input} from 'antd';
 import { Redirect } from "react-router-dom";
 import * as firebase from 'firebase';
 
