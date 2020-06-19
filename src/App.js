@@ -8,7 +8,7 @@ import { HeartTwoTone, } from '@ant-design/icons';
 import CopyToClipboard from "./components/CopyToClipboard";
 
 
-const { Content, Footer } = Layout;
+const { Footer } = Layout;
 
 function App() {
   return (
