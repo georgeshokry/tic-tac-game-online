@@ -1,5 +1,22 @@
-.board-row:after {
-    clear: both;
-    content: "";
-    display: table;
+
+.square-back {
+    position: relative;
+    width: 30%;
+    padding-bottom: 30%;
+    margin: auto;
+    overflow: hidden;
+    display: inline-flex;
+}
+
+.content {
+    position:absolute;
+    height:90%;
+    width:90%;
+    padding: 5%;
+    text-align:center;
+
+}
+
+.box{
+    display: flow-root;
 }

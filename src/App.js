@@ -5,6 +5,7 @@ import './App.css';
 import Game from "./components/Game";
 import NameModal from "./components/NameModal";
 import { HeartTwoTone, } from '@ant-design/icons';
+import CopyToClipboard from "./components/CopyToClipboard";
 
 
 const { Content, Footer } = Layout;
@@ -12,26 +13,28 @@ const { Content, Footer } = Layout;
 function App() {
   return (
       <React.Fragment>
-          <Layout className="layout">
-              <Content style={{ padding: '0 50px' }}>
-        <Router>
 
-        <Switch>
-            <Route path="/" exact>
-                <NameModal/>
-            </Route>
-            <Route path="/play/:uid" exact>
-                <Game/>
-            </Route>
-            <Redirect to="/"/>
-        </Switch>
-        </Router>
-              </Content>
-      <Footer style={{ textAlign: 'center' }}>
-          created by <HeartTwoTone  className="pulse" twoToneColor="#eb2f96" /> <a target="_blank" rel="noopener noreferrer" href="https://github.com/georgeshokry">George Shokry</a>
-      </Footer>
 
+          <Layout className="layout header-page">
+              <CopyToClipboard/>
+          <Footer style={{ textAlign: 'center' }}>
+              created by <HeartTwoTone  className="pulse" twoToneColor="#eb2f96" /> <a target="_blank" rel="noopener noreferrer" href="https://github.com/georgeshokry">George Shokry</a>
+          </Footer>
           </Layout>
+          <br/>
+        <Router>
+            <Switch>
+             <Route path="/" exact>
+                <NameModal/>
+             </Route>
+             <Route path="/play/:uid" exact>
+
+                <Game/>
+
+             </Route>
+             <Redirect to="/"/>
+            </Switch>
+        </Router>
       </React.Fragment>
 );
 }

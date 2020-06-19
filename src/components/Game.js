@@ -147,22 +147,19 @@ class Game extends Component{
         }else {
            return(
                <>
-               <br/>
-               <CopyToClipboard/>
-               <div className="game">
 
-                <div>
-                    <Title level={4} className="turnName">{whoWins === "X" ||  whoWins === "O" ? "WINNER IS "+whoWins : whoWins ==="nail" ? "Game Over" : ""}</Title>
+                    <Title level={4} className="turnName">{whoWins === "X" ||  whoWins === "O" ? "WINNER IS "+this.state[whoWins] : whoWins ==="nail" ? "Game Over" : ""}</Title>
                     <Board
                         onClick={(position)=>{this.handelClick(position)}}
                         squares={current.squares}
                     />
-
                     <Title level={4} className="turnName">{ whoWins === "" ? this.state.nextPlayer + " Turn" : ""}</Title>
+
                     {resetButton}
-                </div>
-           </div>
-                   </>
+
+                    <br/>
+                    <br/>
+                    </>
            )
         }
     }

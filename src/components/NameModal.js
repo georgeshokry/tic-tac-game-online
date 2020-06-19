@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal, Button, Form, Input} from 'antd';
+import {Modal, Button, Form, Input, InputNumber} from 'antd';
 import { Redirect } from "react-router-dom";
 import * as firebase from 'firebase';
 
@@ -32,6 +32,7 @@ class NameModal extends Component {
         this.state = {
             showModal: false,
             userName: '',
+            scoreLimit: "",
         };
     }
     componentDidMount() {
@@ -45,6 +46,9 @@ class NameModal extends Component {
      onFinish = values => {
 
 
+        console.log(this.state.scoreLimit);
+
+
          const postData =  {
              username: values.usernameX,
              playArray: Array(9).fill(""),
@@ -53,7 +57,8 @@ class NameModal extends Component {
              X: values.usernameX,
              O: values.usernameO,
              whoWins: "",
-             xIsNext: true
+             xIsNext: true,
+             // scoreLimit: this.state.ScoreLimit
          };
 
          const newPostKey = firebase.database().ref().child('playXo').push().key;
@@ -78,6 +83,13 @@ class NameModal extends Component {
      onFinishFailed = errorInfo => {
         console.log('Failed:', errorInfo);
     };
+
+    // setScoreLimit = (value)=>{
+    //   this.setState({
+    //       ...this.state,
+    //       scoreLimit: value
+    //   })
+    // };
     render() {
 
         if (this.state.userName === '') {
@@ -124,9 +136,20 @@ class NameModal extends Component {
                         <Input/>
                     </Form.Item>
 
+                    {/*<Form.Item*/}
+                    {/*    label="Score Limit"*/}
+                    {/*    name="scoreLimit"*/}
+                    {/*    rules={[*/}
+                    {/*        {*/}
+                    {/*            required: true,*/}
+                    {/*        },*/}
+                    {/*    ]}*/}
+                    {/*>*/}
+                    {/*    <InputNumber min={3} max={50} initialValues={3} value={this.state.scoreLimit} onChange={this.setScoreLimit} />*/}
+                    {/*</Form.Item>*/}
 
                     <Form.Item {...tailLayout}>
-                        <Button type="primary" htmlType="submit">
+                        <Button type="primary" htmlType="submit" block>
                             Start Game
                         </Button>
                     </Form.Item>
