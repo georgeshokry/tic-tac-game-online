@@ -30,3 +30,16 @@
 .resetBtn{
     margin-top: 1rem;
 }
+
+.ver-divider{
+    border-left: 1px solid #ff0010 !important;
+    height: 80px !important;
+}
+
+.x-score{
+    color: #ff0010 !important;
+}
+
+.o-score{
+    color: #1890ff !important;
+}

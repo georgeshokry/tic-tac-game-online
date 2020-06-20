@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import {Spin, Button, Typography} from 'antd';
-import { withRouter } from "react-router-dom";
+import {Spin, Button, Typography, Row, Col, Divider} from 'antd';
+import {Redirect, withRouter} from "react-router-dom";
 import Board from './Board';
 import * as firebase from 'firebase';
 import './Game.css';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 
 
@@ -29,7 +29,11 @@ class Game extends Component{
             contender: "",
             userName: "",
             X: "",
-            O: ""
+            O: "",
+            scoreX: 0,
+            scoreO: 0,
+            scoreLimit: 3,
+            scoreLimitReached: false,
         }
     }
 
@@ -37,23 +41,36 @@ class Game extends Component{
         let newData = this;
 
         firebase.database().ref('/playXo/' + this.props.match.params.uid).on('value', function (snapshot) {
-            newData.setState({
-                ...newData.state,
-                xIsNext: snapshot.val().xIsNext,
-                userName: snapshot.val().username,
-                contender: snapshot.val().contender.username,
-                nextPlayer: snapshot.val().nextPlayer,
-                X: snapshot.val().X,
-                O: snapshot.val().O,
-                history: [
-                    { squares: snapshot.val().playArray }
-                ],
-                loading: false,
-                whoWins: snapshot.val().whoWins
+            if(snapshot.exists()) {
 
-            });
+                newData.setState({
+                    ...newData.state,
+                    xIsNext: snapshot.val().xIsNext,
+                    userName: snapshot.val().username,
+                    contender: snapshot.val().contender.username,
+                    nextPlayer: snapshot.val().nextPlayer,
+                    X: snapshot.val().X,
+                    O: snapshot.val().O,
+                    history: [
+                        {squares: snapshot.val().playArray}
+                    ],
+                    loading: false,
+                    whoWins: snapshot.val().whoWins,
+                    scoreX: snapshot.val().scoreX,
+                    scoreO: snapshot.val().scoreO,
+                    scoreLimit: snapshot.val().scoreLimit,
+                    scoreLimitReached: snapshot.val().scoreLimit === snapshot.val().scoreX ? true : snapshot.val().scoreLimit === snapshot.val().scoreO ? true : false
 
-            console.log("WHO WINS",newData.whoWins);
+                });
+
+                console.log("WHO WINS", newData.state.scoreLimitReached);
+            }else {
+                newData.setState({
+                    ...newData.state,
+                    uidExist: false,
+                    loading: false,
+                });
+            }
         });
 
     }
@@ -72,13 +89,16 @@ class Game extends Component{
             squares[position] = this.state.xIsNext ? 'X' : 'O';
             const whoWins = calculateWinner(squares);
             const checkNail = squares.some(el => el === "");
+            console.log("before set state:", whoWins)
             this.setState({
+                ...this.state,
                 history: history.concat(
                     {squares: squares}
                 ),
                 xIsNext: !this.state.xIsNext,
                 stepNumber: history.length,
-                whoWins: whoWins
+                whoWins: whoWins,
+
             });
             console.log(
                 "his", history, "CU", current, "SQ", squares, "WINNER", whoWins, "CHACK", checkNail
@@ -86,8 +106,10 @@ class Game extends Component{
             firebase.database().ref().child('/playXo/' + this.props.match.params.uid).update({
                 xIsNext: !this.state.xIsNext,
                 playArray: [...squares],
-                whoWins: checkNail ? whoWins : "nail",
-                nextPlayer: this.state.xIsNext ? this.state.O : this.state.X
+                whoWins: checkNail === false && whoWins ==="" ? "nail" : whoWins,
+                nextPlayer: this.state.xIsNext ? this.state.O : this.state.X,
+                scoreX: whoWins === "X" ? this.state.scoreX + 1 : this.state.scoreX,
+                scoreO: whoWins === "O" ? this.state.scoreO + 1 : this.state.scoreO,
             }).catch((error) => {
                 console.log(error);
             });
@@ -97,20 +119,22 @@ class Game extends Component{
     handelReset=()=>{
         this.setState({
             ...this.state,
-                showModal: false,
-                userName: '',
-                xIsNext: true,
-                stepNum: 0,
-                history: [
-                    { squares: Array(9).fill("") }
-                ],
-                uidExist: null,
-                loading: true,
-                contender: "",
-                nextPlayer: "",
-                waitingContender: false,
-                playArray: [],
-                whoWins: ""
+            showModal: false,
+            userName: '',
+            xIsNext: true,
+            stepNum: 0,
+            history: [{
+                    squares: Array(9).fill("")
+                }],
+            uidExist: null,
+            loading: true,
+            contender: "",
+            nextPlayer: "",
+            waitingContender: false,
+            playArray: [],
+            whoWins: "",
+            scoreX: this.state.scoreLimitReached ? 0 : this.state.scoreX,
+            scoreO: this.state.scoreLimitReached ? 0 : this.state.scoreO,
         });
         firebase.database().ref().child('/playXo/' + this.props.match.params.uid).update(  {
             xIsNext: true,
@@ -121,21 +145,67 @@ class Game extends Component{
         });
     };
 
+    handelNewScore = () =>{
+        this.setState({
+            ...this.state,
+            showModal: false,
+            userName: '',
+            xIsNext: true,
+            stepNum: 0,
+            history: [{
+                squares: Array(9).fill("")
+            }],
+            uidExist: null,
+            loading: true,
+            contender: "",
+            nextPlayer: "",
+            waitingContender: false,
+            playArray: [],
+            whoWins: "",
+            scoreX: 0,
+            scoreO: 0,
+            scoreLimitReached: false
+        });
+        firebase.database().ref().child('/playXo/' + this.props.match.params.uid).update(  {
+            xIsNext: true,
+            playArray:  Array(9).fill(""),
+            whoWins: "",
+            scoreX: 0,
+            scoreO: 0,
+        }).catch((error)=>{
+            console.log(error);
+        });
+    };
+
 
     render() {
         const history = this.state.history;
         const current = history[this.state.stepNum];
         const whoWins = this.state.whoWins;
+        const scoreReched = this.state.scoreLimitReached;
 
         let resetButton;
+        let board;
 
-        if(whoWins || whoWins === "nail"){
-            resetButton =  <Button type="primary" className="resetBtn" block onClick={this.handelReset}>Play Again</Button>
+        if(this.state.scoreLimitReached ){
+            board = <Title level={3} className="turnName">Score Limit Reached</Title>
+
+        }else {
+            board =
+                <Board
+                    onClick={(position)=>{this.handelClick(position)}}
+                    squares={current.squares}/>
+        }
+
+        if((whoWins || whoWins === "nail") && scoreReched === false){
+            resetButton =  <Button type="primary" className="resetBtn" block onClick={this.handelReset}>Next Round</Button>
+        } else if(scoreReched === true){
+            resetButton =  <Button type="ghost" className="resetBtn" block onClick={this.handelNewScore}>Reset Score</Button>
         } else {
             resetButton  = null;
         }
 
-        if(this.state.loading === true){
+        if(this.state.loading === true && this.state.uidExist === null){
             return (
                 <div className="contain">
                 <Spin size="large" tip="Loading..." spinning={this.state.loading}>
@@ -143,16 +213,41 @@ class Game extends Component{
                 </Spin>
                 </div>
             )
-        }else {
+        }else if(this.state.loading === false && this.state.uidExist === null){
            return(
                <>
 
-                    <Title level={4} className="turnName">{whoWins === "X" ||  whoWins === "O" ? "WINNER IS "+this.state[whoWins] : whoWins ==="nail" ? "Game Over" : ""}</Title>
-                    <Board
-                        onClick={(position)=>{this.handelClick(position)}}
-                        squares={current.squares}
-                    />
-                    <Title level={4} className="turnName">{ whoWins === "" ? this.state.nextPlayer + " Turn" : ""}</Title>
+                   <Row justify="space-around">
+                       <Col >
+                           <Row>
+                               <Title level={4} className="x-score">
+                                   X
+                               </Title>
+                           </Row>
+                           <Title level={3} className="turnName">
+                               {this.state.scoreX}
+                           </Title>
+                           </Col>
+                       <Divider type="vertical" className="ver-divider"/>
+                       <Col >
+                           <Row>
+                           <Title level={4} className="o-score">
+                               O
+                           </Title>
+                           </Row>
+                           <Title level={3} className="turnName">
+                           {this.state.scoreO}
+                           </Title>
+                       </Col>
+                   </Row>
+                   <Row justify="space-around">
+                       <Text strong={true}>
+                           Limit : {this.state.scoreLimit}
+                       </Text>
+                   </Row>
+                    <Title level={3} className="turnName">{whoWins === "X" ||  whoWins === "O" ? "WINNER IS "+this.state[whoWins] : whoWins ==="nail" ? "Game Over" : ""}</Title>
+                   {board}
+                    <Title level={3} className="turnName">{ whoWins === "" && this.state.scoreLimitReached === false ? this.state.nextPlayer + " Turn" : ""}</Title>
 
                     {resetButton}
 
@@ -160,6 +255,10 @@ class Game extends Component{
                     <br/>
                     </>
            )
+        }else if(this.state.loading === false && this.state.uidExist === false){
+            return(
+                <Redirect to="/"/>
+            )
         }
     }
 }

@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { Row } from 'antd';
 import Square from './Square';
 import './Board.css';
 
@@ -13,7 +14,7 @@ class Board extends Component{
     render() {
         return (
 
-            <div className="box">
+            <Row className="box" justify="space-around">
             <div className="square-back">
                 <div className="content">
                     {this.renderSquares(0)}
@@ -59,7 +60,7 @@ class Board extends Component{
                     {this.renderSquares(8)}
                     </div>
                         </div>
-            </div>
+            </Row>
 
         )
     }
