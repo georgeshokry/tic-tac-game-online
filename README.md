@@ -1,4 +1,13 @@
+## The Tic-Tac-Toe Online Game
+### a react app online game using firebase.
+####Created Using:
+* Reactjs v16.13
+* antd v4.3 for UI.
+* react-router-dom v5.2.
+* firebase v7.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
 
 ## Available Scripts
 
